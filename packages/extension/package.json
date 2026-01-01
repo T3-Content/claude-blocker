@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsup src/service-worker.ts src/content-script.ts src/popup.ts src/options.ts --format iife --out-dir dist --clean && node scripts/generate-icons.mjs && cp src/popup.html src/popup.css src/options.html src/options.css manifest.json dist/",
+    "build": "tsup src/service-worker.ts src/content-script.ts src/popup.ts src/options.ts --format iife --out-dir dist --clean && node scripts/generate-icons.mjs && node scripts/copy-assets.mjs",
     "dev": "pnpm build --watch",
     "typecheck": "tsc --noEmit",
     "pack": "node scripts/pack-crx.mjs",
