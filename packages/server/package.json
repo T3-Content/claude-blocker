@@ -1,0 +1,37 @@
+{
+  "name": "claude-blocker",
+  "version": "1.0.0",
+  "description": "Block distracting websites unless Claude Code is actively running inference",
+  "type": "module",
+  "bin": {
+    "claude-blocker": "./dist/bin.js"
+  },
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/bin.ts src/server.ts --format esm --dts --clean",
+    "dev": "tsx src/bin.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@claude-blocker/shared": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "claude",
+    "productivity",
+    "blocker",
+    "focus"
+  ],
+  "license": "MIT"
+}

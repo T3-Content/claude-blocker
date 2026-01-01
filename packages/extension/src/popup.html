@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Blocker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Claude Blocker</h1>
+        <div class="status" id="status">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+      </header>
+
+      <section class="stats">
+        <div class="stat">
+          <span class="stat-value" id="sessions">0</span>
+          <span class="stat-label">Sessions</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="working">0</span>
+          <span class="stat-label">Working</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="blocked-status">-</span>
+          <span class="stat-label">Sites</span>
+        </div>
+      </section>
+
+      <section class="bypass-section">
+        <button id="bypass-btn" class="bypass-btn" disabled>
+          Emergency Bypass (5 min)
+        </button>
+        <p class="bypass-note" id="bypass-note">1 bypass per day</p>
+      </section>
+
+      <section class="domains-section">
+        <h2>Blocked Domains</h2>
+        <ul class="domain-list" id="domain-list">
+          <li>x.com</li>
+          <li>twitter.com</li>
+        </ul>
+      </section>
+
+      <footer>
+        <a href="https://github.com/anthropic/claude-blocker" target="_blank"
+          >GitHub</a
+        >
+      </footer>
+    </div>
+
+    <script src="popup.global.js"></script>
+  </body>
+</html>
