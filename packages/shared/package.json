@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "main": "./src/types.ts",
-  "types": "./src/types.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": "./src/types.ts"
+    ".": "./src/index.ts"
   }
 }

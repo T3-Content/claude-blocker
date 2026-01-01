@@ -21,7 +21,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/bin.ts src/server.ts --format esm --dts --clean",
+    "build": "tsup",
     "dev": "tsx src/bin.ts",
     "typecheck": "tsc --noEmit"
   },
