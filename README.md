@@ -72,7 +72,7 @@ npx claude-blocker --help
 
 - Node.js 18+
 - Chrome (or Chromium-based browser)
-- [Claude Code](https://claude.ai/claude-code)
+- [Claude Code](https://code.claude.com/docs/en/setup)
 
 ## Development
 
