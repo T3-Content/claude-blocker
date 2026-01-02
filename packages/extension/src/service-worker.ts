@@ -1,9 +1,12 @@
 export {};
 
 const WS_URL = "ws://localhost:8765/ws";
-const KEEPALIVE_INTERVAL = 20_000;
 const RECONNECT_BASE_DELAY = 1_000;
 const RECONNECT_MAX_DELAY = 30_000;
+
+// Alarm names
+const ALARM_KEEPALIVE = "keepalive";
+const ALARM_CHECK_BYPASS = "checkBypass";
 
 // The actual state - service worker is single source of truth
 interface State {
@@ -23,7 +26,6 @@ const state: State = {
 };
 
 let websocket: WebSocket | null = null;
-let keepaliveInterval: ReturnType<typeof setInterval> | null = null;
 let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
 let retryCount = 0;
 
@@ -109,20 +111,15 @@ function connect() {
   }
 }
 
+// Use chrome.alarms for keepalive (survives Firefox Event Page suspension)
 function startKeepalive() {
   stopKeepalive();
-  keepaliveInterval = setInterval(() => {
-    if (websocket?.readyState === WebSocket.OPEN) {
-      websocket.send(JSON.stringify({ type: "ping" }));
-    }
-  }, KEEPALIVE_INTERVAL);
+  // periodInMinutes minimum is ~0.5 in most browsers, so ~30 seconds
+  chrome.alarms.create(ALARM_KEEPALIVE, { periodInMinutes: 0.33 });
 }
 
 function stopKeepalive() {
-  if (keepaliveInterval) {
-    clearInterval(keepaliveInterval);
-    keepaliveInterval = null;
-  }
+  chrome.alarms.clear(ALARM_KEEPALIVE);
 }
 
 function scheduleReconnect() {
@@ -131,6 +128,27 @@ function scheduleReconnect() {
   retryCount++;
   reconnectTimeout = setTimeout(connect, delay);
 }
+
+// Handle alarm events (works across Firefox Event Page suspension)
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === ALARM_KEEPALIVE) {
+    // Send keepalive ping or reconnect if disconnected
+    if (websocket?.readyState === WebSocket.OPEN) {
+      websocket.send(JSON.stringify({ type: "ping" }));
+    } else if (websocket?.readyState !== WebSocket.CONNECTING) {
+      connect();
+    }
+  }
+
+  if (alarm.name === ALARM_CHECK_BYPASS) {
+    // Check if bypass has expired
+    if (state.bypassUntil && state.bypassUntil <= Date.now()) {
+      state.bypassUntil = null;
+      chrome.storage.sync.remove("bypassUntil");
+      broadcast();
+    }
+  }
+});
 
 // Handle messages from content scripts
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -169,14 +187,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
-// Check bypass expiry
-setInterval(() => {
-  if (state.bypassUntil && state.bypassUntil <= Date.now()) {
-    state.bypassUntil = null;
-    chrome.storage.sync.remove("bypassUntil");
-    broadcast();
-  }
-}, 5000);
+// Start bypass expiry check alarm (every ~6 seconds)
+chrome.alarms.create(ALARM_CHECK_BYPASS, { periodInMinutes: 0.1 });
 
-// Start
+// Start connection
 connect();

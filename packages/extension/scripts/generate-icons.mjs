@@ -5,7 +5,11 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const svgPath = join(__dirname, '..', 'icon.svg');
-const distPath = join(__dirname, '..', 'dist');
+
+// Support target argument: chrome, firefox, or default to 'dist'
+const target = process.argv[2];
+const distFolder = target ? `dist-${target}` : 'dist';
+const distPath = join(__dirname, '..', distFolder);
 
 const sizes = [16, 32, 48, 128];
 
