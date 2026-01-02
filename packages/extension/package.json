@@ -4,17 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsup src/service-worker.ts src/content-script.ts src/popup.ts src/options.ts --format iife --out-dir dist --clean && node scripts/generate-icons.mjs && cp src/popup.html src/popup.css src/options.html src/options.css manifest.json dist/",
-    "dev": "pnpm build --watch",
+    "build": "pnpm build:chrome && pnpm build:firefox",
+    "build:chrome": "tsup src/service-worker.ts src/content-script.ts src/popup.ts src/options.ts --format iife --out-dir dist-chrome --clean && node scripts/generate-icons.mjs chrome && node scripts/build.mjs chrome",
+    "build:firefox": "tsup src/service-worker.ts src/content-script.ts src/popup.ts src/options.ts --format iife --out-dir dist-firefox --clean && node scripts/generate-icons.mjs firefox && node scripts/build.mjs firefox",
+    "dev": "pnpm dev:chrome",
+    "dev:chrome": "pnpm build:chrome --watch",
+    "dev:firefox": "pnpm build:firefox && web-ext run --source-dir dist-firefox",
     "typecheck": "tsc --noEmit",
     "pack": "node scripts/pack-crx.mjs",
-    "zip": "cd dist && zip -r ../claude-blocker.zip ."
+    "pack:chrome": "node scripts/pack-crx.mjs",
+    "zip": "cd dist-chrome && zip -r ../claude-blocker-chrome.zip .",
+    "zip:chrome": "cd dist-chrome && zip -r ../claude-blocker-chrome.zip .",
+    "zip:firefox": "cd dist-firefox && zip -r ../claude-blocker-firefox.zip ."
   },
   "devDependencies": {
     "@types/chrome": "^0.0.287",
     "crx": "^5.0.1",
     "sharp": "^0.34.5",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "web-ext": "^8.0.0"
   }
 }

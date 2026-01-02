@@ -1,0 +1,11 @@
+{
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "claude-blocker@t3-content.org",
+      "strict_min_version": "121.0"
+    }
+  },
+  "background": {
+    "scripts": ["service-worker.global.js"]
+  }
+}
